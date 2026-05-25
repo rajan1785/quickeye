@@ -1,0 +1,15 @@
+torch>=2.4
+torchvision
+transformers>=4.56
+Pillow
+numpy
+scikit-learn
+fastapi
+uvicorn[standard]
+python-multipart
+python-dotenv
+openai>=1.50
+modal>=0.64
+tqdm
+pydantic>=2.7
+supabase>=2.7

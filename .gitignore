@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.eggs/
+*.egg-info/
+dist/
+build/
+site/
+.venv/
+venv/
+env/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Modal
+.modal/
+modal.json
+
+# Capacitor / Android
+android/app/build/
+android/.gradle/
+android/capacitor-cordova-android-plugins/
+android/local.properties
+android/.idea/
+ios/
+capacitor.config.ts
+
+# Data / models / secrets
+data/
+models/
+*.npz
+*.keystore
+.env
+.env.*
+!.env.example

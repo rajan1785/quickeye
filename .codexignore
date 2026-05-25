@@ -1,0 +1,9 @@
+data/
+models/
+node_modules/
+.venv/
+.next/
+android/
+ios/
+__pycache__/
+*.npz
