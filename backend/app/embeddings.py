@@ -9,7 +9,7 @@ import torch
 from PIL import Image
 from transformers import AutoImageProcessor, AutoModel
 
-MODEL_ID = "facebook/dinov3-vitb16-pretrain-lvd1689m"
+MODEL_ID = "facebook/dinov2-base"
 
 _model: Any | None = None
 _processor: Any | None = None

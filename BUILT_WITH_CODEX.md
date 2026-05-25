@@ -13,3 +13,6 @@ Prompt: 4 endpoints (/health, /train, /predict, /explain), CORS open, on-disk mo
 
 ### Session 6 — Modal Deployment (May 26, ~3k tokens)
 Prompt: wrap FastAPI as Modal ASGI app with CPU container, persistent volume for trained models, secret injection for OpenAI key. Codex used current Modal API (add_local_python_source, min_containers, scaledown_window) — none of the deprecated patterns. Added backend/__init__.py manually for namespace package safety.
+
+### Session 7 — Modal Deployment Live (May 26)
+Backend deployed to https://rajankushwaha178534--quickeye-fastapi-app-dev.modal.run/health returns 200. Image built in 81s. DINOv3 + GPT-5.4-mini + FastAPI bundled. Auth setup script (scripts/setup_modal_auth.sh) bypassed Modal CLI hanging browser flow.
