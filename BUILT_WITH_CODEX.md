@@ -25,3 +25,6 @@ Full training screen: native camera capture via input[capture=environment], live
 
 ### Session 11 — Inspect UI (May 27)
 Inspect screen: native camera capture, big verdict badge (✓OK/✗DEFECT with aria-live), confidence %, OK/defect similarity bars, AI Inspector card showing defect_type/location chips + GPT-5 explanation, Save to History (localStorage cap 50), Inspect Another flow with file input reset. Codex used previewUrlRef pattern to dodge stale closure bug with revokeObjectURL.
+
+### Session 12 — History UI (May 27)
+History screen: grid of inspection cards (1/2/3 col responsive), formatTimeAgo helper (s/m/h/d), per-card broken-image detection via onError, verdict chip + confidence + clamped explanation, "Clear All" with confirm dialog, empty state with CTA back to /inspect. Object URL persistence limitation handled gracefully.
