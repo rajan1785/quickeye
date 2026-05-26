@@ -122,3 +122,64 @@ def explain(
 ) -> dict[str, object]:
     content = file.file.read()
     return explain_defect(content, product_context=product_context)
+
+
+@app.post("/predict-burst")
+def predict_burst(
+    files: Annotated[list[UploadFile], File(...)],
+    model_id: Annotated[str, Form()] = "default",
+    explain: Annotated[bool, Form()] = True,
+) -> dict[str, object]:
+    """
+    Burst-vote inspection: accepts 2-8 images of the same unit (different angles
+    or rapid sequential captures). Returns aggregated verdict with uncertain state
+    for low-agreement or low-confidence bursts. Optionally runs GPT-5 sanity check
+    on defect verdicts and downgrades to uncertain if AI disagrees.
+    """
+    n = len(files)
+    if n < 2 or n > 8:
+        raise HTTPException(
+            status_code=400,
+            detail="Burst must contain between 2 and 8 images.",
+        )
+
+    contents_list: list[bytes] = [upload.file.read() for upload in files]
+    classifier = _get_classifier(model_id)
+
+    per_image: list[dict[str, object]] = []
+    for content in contents_list:
+        with Image.open(io.BytesIO(content)) as image:
+            embedding = embed_image(image)
+        per_image.append(classifier.predict(embedding))
+
+    n_ok = sum(1 for p in per_image if p["label"] == "ok")
+    n_def = sum(1 for p in per_image if p["label"] == "defect")
+    agreement = max(n_ok, n_def) / n
+    avg_confidence = float(np.mean([p["confidence"] for p in per_image]))
+
+    if agreement < 0.6:
+        label: str = "uncertain"
+    elif avg_confidence < 0.75:
+        label = "uncertain"
+    else:
+        label = "ok" if n_ok > n_def else "defect"
+
+    explanation: dict[str, object] | None = None
+    if explain and label == "defect":
+        defect_idx = next(
+            (i for i, p in enumerate(per_image) if p["label"] == "defect"),
+            0,
+        )
+        explanation = explain_defect(contents_list[defect_idx])
+        if explanation.get("defect_detected") is False:
+            label = "uncertain"
+
+    return {
+        "label": label,
+        "agreement": agreement,
+        "avg_confidence": avg_confidence,
+        "per_image": per_image,
+        "explanation": explanation,
+        "model_id": model_id,
+        "burst_size": n,
+    }
