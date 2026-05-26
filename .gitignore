@@ -56,3 +56,7 @@ models/
 .env
 .env.*
 !.env.example
+frontend/android/
+frontend/ios/
+frontend/out/
+*.apk
