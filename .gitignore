@@ -46,7 +46,6 @@ android/capacitor-cordova-android-plugins/
 android/local.properties
 android/.idea/
 ios/
-capacitor.config.ts
 
 # Data / models / secrets
 data/
