@@ -16,3 +16,6 @@ Prompt: wrap FastAPI as Modal ASGI app with CPU container, persistent volume for
 
 ### Session 7 — Modal Deployment Live (May 26)
 Backend deployed to https://rajankushwaha178534--quickeye-fastapi-app-dev.modal.run/health returns 200. Image built in 81s. DINOv3 + GPT-5.4-mini + FastAPI bundled. Auth setup script (scripts/setup_modal_auth.sh) bypassed Modal CLI hanging browser flow.
+
+### Session 9 — Frontend Foundation (May 26)
+Next.js 14 PWA: typed API client (trainModel, predictImage, explainImage, healthCheck), landing page with live health check + abbreviated API URL display, dark theme, Card component with accent variants, screen skeletons for Train/Inspect/History. Tailwind + App Router. Codex shipped clean useEffect cleanup pattern (mounted flag), proper Next.js metadata/viewport exports, and dimension-correct types matching backend Pydantic schemas. Zero hand-edits.
