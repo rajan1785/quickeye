@@ -19,3 +19,9 @@ Backend deployed to https://rajankushwaha178534--quickeye-fastapi-app-dev.modal.
 
 ### Session 9 — Frontend Foundation (May 26)
 Next.js 14 PWA: typed API client (trainModel, predictImage, explainImage, healthCheck), landing page with live health check + abbreviated API URL display, dark theme, Card component with accent variants, screen skeletons for Train/Inspect/History. Tailwind + App Router. Codex shipped clean useEffect cleanup pattern (mounted flag), proper Next.js metadata/viewport exports, and dimension-correct types matching backend Pydantic schemas. Zero hand-edits.
+
+### Session 10 — Train UI (May 27)
+Full training screen: native camera capture via input[capture=environment], live count badges (OK X/20, defect Y/20), thumbnail previews with revokeObjectURL cleanup, sticky bottom action button, error banner with dismiss, success state with "Inspect Now" CTA, localStorage persistence of active model. Codex shipped working accessibility (aria-disabled, htmlFor, aria-label) without being asked.
+
+### Session 11 — Inspect UI (May 27)
+Inspect screen: native camera capture, big verdict badge (✓OK/✗DEFECT with aria-live), confidence %, OK/defect similarity bars, AI Inspector card showing defect_type/location chips + GPT-5 explanation, Save to History (localStorage cap 50), Inspect Another flow with file input reset. Codex used previewUrlRef pattern to dodge stale closure bug with revokeObjectURL.
