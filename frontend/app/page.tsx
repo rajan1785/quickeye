@@ -65,6 +65,12 @@ export default function HomePage() {
             subtitle="Review recent inspections and outcomes."
             accent="muted"
           />
+          <Card
+            href="/dashboard"
+            icon="▤"
+            title="Dashboard"
+            subtitle="KPIs, defect trends, AI shift summary."
+          />
         </div>
 
         <div className="mt-10 flex items-center justify-center gap-2 text-xs text-zinc-500">

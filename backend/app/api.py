@@ -150,25 +150,15 @@ def predict(
 
     label = prediction["label"]
 
-    # Layer 1: low classifier confidence → uncertain regardless of which side won
-    if confidence < 0.70:
-        label = "uncertain"
-
-    # Layer 2: GPT disagrees with a "defect" verdict → downgrade to uncertain
-    if (
-        label == "defect"
-        and explanation is not None
-        and explanation.get("defect_detected") is False
-    ):
-        label = "uncertain"
-
-    # Layer 3: GPT sees a defect that classifier missed → upgrade ok to defect
-    if (
-        label == "ok"
-        and explanation is not None
-        and explanation.get("defect_detected") is True
-    ):
-        label = "defect"
+    # GPT-5 Vision is the arbiter. Centroid gives a strong prior; GPT confirms
+    # or overrides. We only mark "uncertain" when classifier + GPT actively
+    # disagree on a defect call — that's a signal to re-position, not a false alarm.
+    if explanation is not None:
+        gpt_sees_defect = explanation.get("defect_detected") is True
+        if label == "defect" and not gpt_sees_defect:
+            label = "uncertain"
+        elif label == "ok" and gpt_sees_defect:
+            label = "defect"
 
     return {
         "label": label,

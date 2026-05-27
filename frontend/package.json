@@ -18,7 +18,8 @@
     "@capacitor/filesystem": "^6.0.0",
     "next": "^14.0.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "recharts": "^2.15.4"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.0.0",
