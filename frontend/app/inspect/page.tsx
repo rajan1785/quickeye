@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { predictImage, type PredictResult } from "@/lib/api";
+import { playBuzz, playChime } from "@/lib/sound";
 
 type HistoryEntry = {
   timestamp: string;
@@ -64,6 +65,11 @@ export default function InspectPage() {
     try {
       const response = await predictImage(file, "default", true);
       setResult(response);
+      if (response.label === "defect") {
+        playBuzz();
+      } else if (response.label === "ok") {
+        playChime();
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Inspection failed");
     } finally {
