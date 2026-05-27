@@ -38,7 +38,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
           <Card
             href="/train"
             icon="⚙"
@@ -49,7 +49,13 @@ export default function HomePage() {
             href="/inspect"
             icon="■"
             title="Inspect Unit"
-            subtitle="Run a quick check on a unit from the line."
+            subtitle="Manual: snap one photo, get a verdict."
+          />
+          <Card
+            href="/auto-inspect"
+            icon="◉"
+            title="Auto Inspect"
+            subtitle="Hands-free: phone on a tripod, motion-triggered burst."
             accent="primary"
           />
           <Card

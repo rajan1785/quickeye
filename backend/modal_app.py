@@ -40,8 +40,9 @@ models_volume = modal.Volume.from_name(MODEL_VOLUME_NAME, create_if_missing=True
     cpu=2.0,
     memory=4096,
     timeout=300,
-    scaledown_window=300,
-    min_containers=0,
+    scaledown_window=600,
+    min_containers=1,
+    region="ap-south",
 )
 @modal.asgi_app()
 def fastapi_app() -> modal.ASGIApp:

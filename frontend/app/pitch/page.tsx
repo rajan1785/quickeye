@@ -188,6 +188,48 @@ export default function PitchPage() {
           </div>
         </Slide>
 
+        <Slide number="05" title="Roadmap">
+          <p className="text-zinc-300">
+            What ships next, in order of customer impact. Honest about what&apos;s missing today.
+          </p>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <RoadmapBlock
+              when="This week (Phase 1)"
+              items={[
+                "Per-customer authentication + model namespacing",
+                "Multi-product support (one classifier per SKU)",
+                "Hindi + Marathi UI",
+                "Production-signed APK (no scary install warnings)",
+                "Always-warm container (no 25s cold-start)",
+                "Mumbai region deploy (sub-100ms RTT in India)",
+              ]}
+            />
+            <RoadmapBlock
+              when="2–4 weeks"
+              items={[
+                "👍/👎 feedback loop — model improves from production data",
+                "Backend persistence of inspection history (Supabase)",
+                "WhatsApp / SMS defect alerts to the owner",
+                "PDF daily report for ISO 9001 + customer audits",
+                "Lighting drift detector + 'recalibrate' nudges",
+                "Razorpay subscription billing",
+              ]}
+            />
+            <RoadmapBlock
+              when="Quarter 2"
+              items={[
+                "On-device offline mode (TensorFlow Lite, no internet needed)",
+                "k-NN classifier (handles multi-modal OK — e.g. same SKU in 3 colors)",
+                "Multi-station aggregation (3 phones, one product line)",
+                "Owner web dashboard with cost-saved estimator",
+                "DPDP Act 2023 compliance (consent, data localization)",
+                "Play Store listing + Android tablet edition",
+              ]}
+            />
+          </div>
+        </Slide>
+
         <footer className="mt-16 border-t border-zinc-900 pt-6 text-sm text-zinc-500">
           <div>
             QuickEye · Rajan Kumar Kushwaha · #AIBuildersHackathon
@@ -240,6 +282,21 @@ function Feature({ title, body }: { title: string; body: string }) {
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
       <div className="text-base font-semibold text-zinc-100">{title}</div>
       <p className="mt-2 text-sm leading-6 text-zinc-400">{body}</p>
+    </div>
+  );
+}
+
+function RoadmapBlock({ when, items }: { when: string; items: string[] }) {
+  return (
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+      <div className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+        {when}
+      </div>
+      <ul className="mt-3 space-y-2 text-sm text-zinc-300">
+        {items.map((item) => (
+          <li key={item}>• {item}</li>
+        ))}
+      </ul>
     </div>
   );
 }
