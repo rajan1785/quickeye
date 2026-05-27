@@ -8,7 +8,7 @@ export type ExplainResult = {
 };
 
 export type PredictResult = {
-  label: "ok" | "defect";
+  label: "ok" | "defect" | "uncertain";
   confidence: number;
   sim_ok: number;
   sim_defect: number;

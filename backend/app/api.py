@@ -142,8 +142,19 @@ def predict(
     if explain and (prediction["confidence"] < 0.85 or prediction["label"] == "defect"):
         explanation = explain_defect(content)
 
+    # Three-layer defense (single-shot edition):
+    # If centroid classifier says "defect" but GPT-5 Vision sees no defect,
+    # downgrade to "uncertain" instead of trusting one shaky signal.
+    label = prediction["label"]
+    if (
+        prediction["label"] == "defect"
+        and explanation is not None
+        and explanation.get("defect_detected") is False
+    ):
+        label = "uncertain"
+
     return {
-        "label": prediction["label"],
+        "label": label,
         "confidence": prediction["confidence"],
         "sim_ok": prediction["sim_ok"],
         "sim_defect": prediction["sim_defect"],

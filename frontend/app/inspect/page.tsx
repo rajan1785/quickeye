@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 
 import { predictImage, type PredictResult } from "@/lib/api";
-import { playBuzz, playChime } from "@/lib/sound";
+import { playBuzz, playChime, playUncertain } from "@/lib/sound";
 
 type HistoryEntry = {
   timestamp: string;
@@ -69,6 +69,8 @@ export default function InspectPage() {
         playBuzz();
       } else if (response.label === "ok") {
         playChime();
+      } else {
+        playUncertain();
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Inspection failed");
@@ -113,7 +115,12 @@ export default function InspectPage() {
     localStorage.setItem("quickeye:history", JSON.stringify(next));
   }
 
-  const verdictIsOk = result?.label === "ok";
+  const verdictTone =
+    result?.label === "ok"
+      ? { border: "border-emerald-500/40", bg: "bg-emerald-500/20", text: "text-emerald-300", label: "✓ OK" }
+      : result?.label === "defect"
+        ? { border: "border-red-500/40", bg: "bg-red-500/20", text: "text-red-300", label: "✗ DEFECT" }
+        : { border: "border-amber-500/40", bg: "bg-amber-500/20", text: "text-amber-300", label: "? UNCERTAIN" };
 
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100">
@@ -197,15 +204,16 @@ export default function InspectPage() {
               role="status"
               aria-live="polite"
               aria-label={`Verdict ${result.label}`}
-              className={`rounded-3xl border p-5 ${
-                verdictIsOk
-                  ? "border-emerald-500/40 bg-emerald-500/20"
-                  : "border-red-500/40 bg-red-500/20"
-              }`}
+              className={`rounded-3xl border p-5 ${verdictTone.border} ${verdictTone.bg}`}
             >
-              <div className={`text-3xl font-semibold ${verdictIsOk ? "text-emerald-300" : "text-red-300"}`}>
-                {verdictIsOk ? "✓ OK" : "✗ DEFECT"}
+              <div className={`text-3xl font-semibold ${verdictTone.text}`}>
+                {verdictTone.label}
               </div>
+              {result.label === "uncertain" ? (
+                <div className="mt-1 text-xs text-zinc-300">
+                  Classifier saw defect but GPT-5 Vision disagreed — re-position and try again.
+                </div>
+              ) : null}
               <div className="mt-2 text-sm text-zinc-200">
                 Confidence: {(result.confidence * 100).toFixed(1)}%
               </div>
