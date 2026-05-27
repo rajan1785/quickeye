@@ -138,24 +138,41 @@ def predict(
         embedding = embed_image(image)
 
     prediction = classifier.predict(embedding)
+    confidence = float(prediction["confidence"])
+
+    # Always run GPT-5 Vision when explanation is requested — it acts as a
+    # second opinion on BOTH ok and defect verdicts, not just defects.
+    # This catches false negatives (classifier said ok, real defect present)
+    # and false positives (classifier said defect, nothing visibly wrong).
     explanation: dict[str, object] | None = None
-    if explain and (prediction["confidence"] < 0.85 or prediction["label"] == "defect"):
+    if explain:
         explanation = explain_defect(content)
 
-    # Three-layer defense (single-shot edition):
-    # If centroid classifier says "defect" but GPT-5 Vision sees no defect,
-    # downgrade to "uncertain" instead of trusting one shaky signal.
     label = prediction["label"]
+
+    # Layer 1: low classifier confidence → uncertain regardless of which side won
+    if confidence < 0.70:
+        label = "uncertain"
+
+    # Layer 2: GPT disagrees with a "defect" verdict → downgrade to uncertain
     if (
-        prediction["label"] == "defect"
+        label == "defect"
         and explanation is not None
         and explanation.get("defect_detected") is False
     ):
         label = "uncertain"
 
+    # Layer 3: GPT sees a defect that classifier missed → upgrade ok to defect
+    if (
+        label == "ok"
+        and explanation is not None
+        and explanation.get("defect_detected") is True
+    ):
+        label = "defect"
+
     return {
         "label": label,
-        "confidence": prediction["confidence"],
+        "confidence": confidence,
         "sim_ok": prediction["sim_ok"],
         "sim_defect": prediction["sim_defect"],
         "explanation": explanation,
