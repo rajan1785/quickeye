@@ -23,10 +23,55 @@ export type TrainResult = {
   saved_to: string;
 };
 
-async function requestJson<T>(path: string, formData: FormData): Promise<T> {
+const CUSTOMER_KEY = "quickeye:customer_id";
+const WRITE_KEY = "quickeye:write_key";
+
+function makeCustomerId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return `cust_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+  }
+  return `cust_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+}
+
+export function getOrCreateCustomerId(): string {
+  if (typeof window === "undefined") return "anonymous";
+  const existing = window.localStorage.getItem(CUSTOMER_KEY);
+  if (existing && existing.length >= 4 && !existing.includes("__")) return existing;
+  const created = makeCustomerId();
+  window.localStorage.setItem(CUSTOMER_KEY, created);
+  return created;
+}
+
+function getWriteKey(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(WRITE_KEY);
+}
+
+export function setWriteKey(key: string): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(WRITE_KEY, key);
+}
+
+function authHeaders(opts: { write?: boolean } = {}): Record<string, string> {
+  const headers: Record<string, string> = {
+    "X-Customer-ID": getOrCreateCustomerId(),
+  };
+  if (opts.write) {
+    const key = getWriteKey();
+    if (key) headers["X-API-Key"] = key;
+  }
+  return headers;
+}
+
+async function requestJson<T>(
+  path: string,
+  formData: FormData,
+  opts: { write?: boolean } = {},
+): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     method: "POST",
     body: formData,
+    headers: authHeaders(opts),
   });
 
   if (!response.ok) {
@@ -45,7 +90,7 @@ export async function trainModel(
   okFiles.forEach((file) => formData.append("ok_files", file));
   defectFiles.forEach((file) => formData.append("defect_files", file));
   formData.append("model_id", modelId);
-  return requestJson<TrainResult>("/train", formData);
+  return requestJson<TrainResult>("/train", formData, { write: true });
 }
 
 export async function predictImage(
