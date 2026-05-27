@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import io
-import json
 import os
 import pathlib
 from typing import Annotated
 
 import numpy as np
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, File, Form, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 from PIL import Image
 
 from .classifier import CentroidClassifier
@@ -23,13 +23,37 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Customer-ID"],
 )
 
 MODEL_DIR = pathlib.Path(os.environ.get("QUICKEYE_MODEL_DIR", "/tmp/quickeye_models"))
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
-DEFAULT_MODEL_PATH = MODEL_DIR / "default.npz"
 
 _classifier_cache: dict[str, CentroidClassifier] = {}
+
+
+def require_customer(
+    x_customer_id: Annotated[str | None, Header(alias="X-Customer-ID")] = None,
+) -> str:
+    if not x_customer_id or len(x_customer_id) < 4 or "__" in x_customer_id:
+        raise HTTPException(status_code=401, detail="X-Customer-ID header required (>=4 chars, no '__')")
+    return x_customer_id
+
+
+def require_write_key(
+    x_api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
+) -> None:
+    expected = os.environ.get("QUICKEYE_WRITE_KEY")
+    if not expected:
+        return None
+    if x_api_key != expected:
+        raise HTTPException(status_code=403, detail="Invalid X-API-Key")
+    return None
+
+
+def _namespaced(customer_id: str, model_id: str) -> str:
+    safe = "".join(c for c in model_id if c.isalnum() or c in "-_")[:60] or "default"
+    return f"{customer_id}__{safe}"
 
 
 def _model_path(model_id: str) -> pathlib.Path:
@@ -60,14 +84,25 @@ def health() -> dict[str, str]:
     return {"status": "ok", "version": "0.1.0"}
 
 
+@app.get("/whoami")
+def whoami(
+    x_customer_id: Annotated[str | None, Header(alias="X-Customer-ID")] = None,
+) -> dict[str, str]:
+    return {"customer_id": x_customer_id or "anonymous"}
+
+
 @app.post("/train")
 def train(
     ok_files: Annotated[list[UploadFile], File(...)],
     defect_files: Annotated[list[UploadFile], File(...)],
     model_id: Annotated[str, Form()] = "default",
+    customer_id: str = Depends(require_customer),
+    _: None = Depends(require_write_key),
 ) -> dict[str, str | int]:
     if len(ok_files) < 5 or len(defect_files) < 5:
         raise HTTPException(status_code=400, detail="At least 5 OK and 5 defect images are required.")
+
+    namespaced_model_id = _namespaced(customer_id, model_id)
 
     ok_embeddings = np.stack([_embed_upload(upload) for upload in ok_files], axis=0)
     defect_embeddings = np.stack([_embed_upload(upload) for upload in defect_files], axis=0)
@@ -75,16 +110,16 @@ def train(
     classifier = CentroidClassifier()
     classifier.train(ok_embeddings, defect_embeddings)
 
-    model_path = _model_path(model_id)
+    model_path = _model_path(namespaced_model_id)
     classifier.save(str(model_path))
-    _classifier_cache.pop(model_id, None)
-    _classifier_cache[model_id] = classifier
+    _classifier_cache.pop(namespaced_model_id, None)
+    _classifier_cache[namespaced_model_id] = classifier
 
     return {
         "model_id": model_id,
         "ok_count": len(ok_files),
         "defect_count": len(defect_files),
-        "saved_to": str(model_path),
+        "saved_to": f"{model_id}.npz",
     }
 
 
@@ -93,9 +128,11 @@ def predict(
     file: Annotated[UploadFile, File(...)],
     model_id: Annotated[str, Form()] = "default",
     explain: Annotated[bool, Form()] = True,
+    customer_id: str = Depends(require_customer),
 ) -> dict[str, object]:
     content = file.file.read()
-    classifier = _get_classifier(model_id)
+    namespaced_model_id = _namespaced(customer_id, model_id)
+    classifier = _get_classifier(namespaced_model_id)
 
     with Image.open(io.BytesIO(content)) as image:
         embedding = embed_image(image)
@@ -119,7 +156,9 @@ def predict(
 def explain(
     file: Annotated[UploadFile, File(...)],
     product_context: Annotated[str, Form()] = "",
+    customer_id: str = Depends(require_customer),
 ) -> dict[str, object]:
+    _ = customer_id
     content = file.file.read()
     return explain_defect(content, product_context=product_context)
 
@@ -129,6 +168,7 @@ def predict_burst(
     files: Annotated[list[UploadFile], File(...)],
     model_id: Annotated[str, Form()] = "default",
     explain: Annotated[bool, Form()] = True,
+    customer_id: str = Depends(require_customer),
 ) -> dict[str, object]:
     """
     Burst-vote inspection: accepts 2-8 images of the same unit (different angles
@@ -143,8 +183,9 @@ def predict_burst(
             detail="Burst must contain between 2 and 8 images.",
         )
 
+    namespaced_model_id = _namespaced(customer_id, model_id)
     contents_list: list[bytes] = [upload.file.read() for upload in files]
-    classifier = _get_classifier(model_id)
+    classifier = _get_classifier(namespaced_model_id)
 
     per_image: list[dict[str, object]] = []
     for content in contents_list:
