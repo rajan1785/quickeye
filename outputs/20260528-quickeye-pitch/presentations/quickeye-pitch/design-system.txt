@@ -1,0 +1,67 @@
+Slide geometry:
+- 1280x720.
+- Safe margin: 56px.
+- Layout style: dark editorial analytics with strong left alignment and large open proof zones.
+
+Background system:
+- Base fill: near-black slate.
+- Accent glows: muted emerald and amber in the corners.
+- Fine separator lines only; avoid heavy frame grids.
+
+Typography:
+- Title: Aptos Display, 44-52px, semibold/bold, white.
+- Kicker: Aptos, 12-14px, uppercase, tracking widened, emerald.
+- Body: Aptos, 18-22px, light gray.
+- Labels: Aptos, 12-15px, muted gray or soft white.
+- Use short, direct sentences. No paragraphs longer than 3 lines.
+
+Palette:
+- Base: #0b0f14 / #0f1720.
+- Primary accent: #10b981.
+- Secondary accent: #f59e0b.
+- Danger accent: #ef4444.
+- Neutral text: #f4f4f5 / #a1a1aa / #52525b.
+
+Chart grammar:
+- No charts on this deck.
+- If needed, use crisp line connectors and stacked boxes instead of decorative chart forms.
+
+Diagram grammar:
+- Use 4-5 node sequences with explicit labels.
+- Connectors only when meaning is clear.
+- Nodes should read as product stages, not decorative tiles.
+
+Container grammar:
+- Use rectangular panels with subtle borders and low-opacity fills.
+- Avoid default rounded-card repetition.
+- Keep equal-role containers the same height and padding.
+
+Footer / page marker grammar:
+- Small page number and product name only if needed.
+- No source footer because there are no external sources.
+
+Title / kicker grammar:
+- Kicker on the top-left of each slide.
+- Title directly below kicker with a single claim sentence.
+- Support note in a short line below the title.
+
+Data-label grammar:
+- Labels should stay attached to the relevant node or lane.
+- Avoid orphan labels and floating callouts.
+
+Brand asset policy:
+- No official external logo or mascot assets supplied.
+- Do not invent a pseudo-logo.
+- Use product name text only.
+
+Allowed layout families:
+- Cover/problem statement with side proof.
+- Horizontal journey map.
+- Layered technology stack.
+- Persona / audience matrix.
+
+Banned motifs:
+- Generic consulting card walls.
+- Empty dashboard chrome.
+- Decorative emoji icons.
+- Overly soft gradients or pastel SaaS styling.

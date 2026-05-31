@@ -55,7 +55,15 @@ models/
 .env
 .env.*
 !.env.example
-frontend/android/
+# Keep frontend/android tracked so CI can build the APK from it.
+# Build artifacts inside frontend/android are still ignored below.
+frontend/android/app/build/
+frontend/android/.gradle/
+frontend/android/capacitor-cordova-android-plugins/
+frontend/android/local.properties
+frontend/android/.idea/
+frontend/android/build/
+frontend/android/.cxx/
 frontend/ios/
 frontend/out/
 *.apk

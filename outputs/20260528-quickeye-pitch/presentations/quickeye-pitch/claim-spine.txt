@@ -1,0 +1,26 @@
+Thesis:
+- QuickEye gives factory teams a fast visual inspection loop that turns a phone photo into a defect verdict, an explanation, and a shared shift record.
+
+Audience:
+- Factory owners, QC leads, plant managers, and line supervisors in small-to-mid manufacturing environments.
+
+One-line arc:
+- Show the pain of fragmented inspection, the product loop that closes it, the stack that enables it, and the user groups who adopt it first.
+
+Slide list:
+1. Claim: Quality misses still escape because inspection is slow, fragmented, and hard to audit.
+   Proof object: problem map with three pain cards and a failure chain.
+   Source: user prompt and product context only.
+   Omission notes: no invented KPIs or market sizing.
+2. Claim: QuickEye closes the loop from capture to verdict to shared history.
+   Proof object: 5-step user journey diagram.
+   Source: user prompt and existing app workflow.
+   Omission notes: no backend roadmap beyond the described client workflow.
+3. Claim: A client-first stack keeps the workflow fast on-device and easy to extend.
+   Proof object: layered tech stack architecture.
+   Source: user prompt plus the existing Next.js / React / localStorage / Recharts implementation context.
+   Omission notes: no speculative infrastructure claims.
+4. Claim: Factory owners get the margin signal, while QC and line teams use the product day to day.
+   Proof object: audience segmentation / adoption matrix.
+   Source: user prompt and product usage context.
+   Omission notes: no demographic guessing or external market claims.

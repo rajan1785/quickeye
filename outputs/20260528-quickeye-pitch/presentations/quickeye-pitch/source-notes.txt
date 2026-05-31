@@ -1,0 +1,4 @@
+Source notes:
+- User prompt only.
+- No external source deck, market report, or brand asset was supplied.
+- No factual metrics are claimed in the deck; all content is product narrative and workflow framing.

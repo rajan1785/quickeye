@@ -1,0 +1,12 @@
+Contact sheet plan:
+- Slide 1: problem statement with a failure chain and three pain cards.
+- Slide 2: five-step user journey with a single connected product loop.
+- Slide 3: layered client-first stack with a right-side rationale rail.
+- Slide 4: audience segmentation with primary users and decision makers.
+
+Thumbnail checks:
+- Each slide must have a distinct macro rhythm.
+- Slide 1 should read as a pain point.
+- Slide 2 should read as a loop or journey.
+- Slide 3 should read as architecture.
+- Slide 4 should read as audience / adoption.

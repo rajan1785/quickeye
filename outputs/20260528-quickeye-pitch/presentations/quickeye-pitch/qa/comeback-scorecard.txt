@@ -1,0 +1,4 @@
+Comeback scorecard:
+- Primitive choice: editable shapes + text only.
+- Rejected: generic dashboard charts.
+- Rationale: the deck is a pitch narrative, not a metrics deck.
