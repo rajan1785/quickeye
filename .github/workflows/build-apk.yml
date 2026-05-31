@@ -27,8 +27,16 @@ jobs:
       - run: npm run build:static
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-      - run: npx cap add android || true
+      - name: Add Android platform
+        run: |
+          if [ ! -d "android" ]; then
+            npx cap add android
+          else
+            echo "android/ already exists, skipping cap add"
+          fi
       - run: npx cap sync android
+      - name: Debug — verify android exists
+        run: ls -la android && cat android/build.gradle | head -20
       - run: |
           cd android
           chmod +x ./gradlew
